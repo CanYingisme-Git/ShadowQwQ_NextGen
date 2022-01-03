@@ -1,10 +1,7 @@
 package al.nya.shadowqwq;
 
 import al.nya.shadowqwq.annotation.EventTarget;
-import al.nya.shadowqwq.modules.CoreService;
-import al.nya.shadowqwq.modules.Minecraft;
-import al.nya.shadowqwq.modules.Module;
-import al.nya.shadowqwq.modules.ModuleManager;
+import al.nya.shadowqwq.modules.*;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.event.Event;
@@ -39,6 +36,7 @@ public class ShadowQwQ extends JavaPlugin {
         logger.info("ShadowQwQ enabled");
         ModuleManager.addModule(new CoreService());
         ModuleManager.addModule(new Minecraft());
+        ModuleManager.addModule(new Misc());
         EventChannel<Event> eventChannel = GlobalEventChannel.INSTANCE.parentScope(this);
         for (Module module : ModuleManager.getModules()) {
             Method[] methods = module.getClass().getMethods();

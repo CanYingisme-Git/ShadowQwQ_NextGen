@@ -23,19 +23,23 @@ public class CommandUtil {
         String[] messages = message.split(" ");
         if (messages.length == getLength(usage)){
             if (messages[0].equalsIgnoreCase("/"+module.getCommand())){
-                List<Class> classes = parseArgs(messages);
+                List<String> strings = parseArgs(messages);
                 int index = 0;
                 for (DetailedArg arg : usage.getArgs()) {
-                    if (!strict){
-                        if (arg.getClazz() == Double.class){
-                            if (arg.getClazz() != Double.class && arg.getClazz() != Integer.class){
-                                return false;
-                            }
-                        }
-                    }else {
-                        if (arg.getClazz() != classes.get(index)){
+                    try{
+                        if (arg.getClazz() == Integer.class){
+                            Integer.parseInt(strings.get(index));
+                        } else if (arg.getClazz() == Double.class) {
+                            Double.parseDouble(strings.get(index));
+                        }else if (arg.getClazz() == Long.class){
+                            Long.parseLong(strings.get(index));
+                        }else if (arg.getClazz() == String.class){
+
+                        }else {
                             return false;
                         }
+                    }catch (Exception e){
+                        return false;
                     }
                     index += 1;
                 }
@@ -66,6 +70,8 @@ public class CommandUtil {
                 objects.add(messages[2+index]);
             }else if (clazz == Double.class){
                 objects.add(Double.parseDouble(messages[2+index]));
+            }else if (clazz == Long.class){
+                objects.add(Long.parseLong(messages[2+index]));
             }
             index += 1;
         }
@@ -74,26 +80,13 @@ public class CommandUtil {
     private static int getLength(Usage usage){
         return 2 + usage.getArgs().size();
     }
-    private static List<Class> parseArgs(String[] messages){
-        List<String> strings = Arrays.asList(messages);
-        List<Class> classes = new ArrayList<Class>();
+    private static List<String> parseArgs(String[] messages){
         int index = 0;
-        for (String string : strings) {
-            if (index > 1){
-                try {
-                    Integer.parseInt(string);
-                    classes.add(Integer.class);
-                }catch (Exception e){
-                    try{
-                        Double.parseDouble(string);
-                        classes.add(Double.class);
-                    }catch (Exception ex){
-                        classes.add(String.class);
-                    }
-                }
-            }
+        List<String> strings = new ArrayList<String>();
+        for (String message : messages) {
+            if (index > 1)strings.add(message);
             index += 1;
         }
-        return classes;
+        return strings;
     }
 }

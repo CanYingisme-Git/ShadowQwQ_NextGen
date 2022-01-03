@@ -26,8 +26,8 @@ public class CoreService extends Module{
         super("CoreService");
         addUsage(modulesUsage);
         ArrayList<DetailedArg> detailedArgs = new ArrayList<DetailedArg>();
-        detailedArgs.add(new DetailedArg(Integer.class,"A"));
-        detailedArgs.add(new DetailedArg(Integer.class,"B"));
+        detailedArgs.add(new DetailedArg(Long.class,"A"));
+        detailedArgs.add(new DetailedArg(Long.class,"B"));
         addUsage = new Usage("add",detailedArgs,"Add A and B",Side.Group);
         addUsage(addUsage);
     }
@@ -50,9 +50,14 @@ public class CoreService extends Module{
             }
         }
         if (CommandUtil.isUsage(event.getMessage(),addUsage,this,false)){
-            List<Object> objects = CommandUtil.fastParse(event.getMessage(),addUsage);
-            int calc = (int)objects.get(0) + (int)objects.get(1);
-            event.getGroup().sendMessage(calc+"");
+            try{
+                List<Object> objects = CommandUtil.fastParse(event.getMessage(),addUsage);
+                Long calc = (Long) objects.get(0) + (Long) objects.get(1);
+                event.getGroup().sendMessage(calc+"");
+            }catch (Exception e){
+                e.printStackTrace();
+                event.getGroup().sendMessage(e.getMessage());
+            }
         }
         if (CommandUtil.isUsage(event.getMessage(),modulesUsage,this,false)){
             event.getGroup().sendMessage(modules());
