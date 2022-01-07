@@ -19,6 +19,7 @@ import java.util.function.Consumer;
 
 public class ShadowQwQ extends JavaPlugin {
     public static String ID = "al.nya.shadowqwq";
+    public static long owner = Long.parseLong("3192799549");
     public static String VERSION = "0.1";
     public static VersionType VERSION_TYPE = VersionType.ALPHA;
     public  MiraiLogger logger = this.getLogger();
@@ -37,6 +38,7 @@ public class ShadowQwQ extends JavaPlugin {
         ModuleManager.addModule(new CoreService());
         ModuleManager.addModule(new Minecraft());
         ModuleManager.addModule(new Misc());
+        ModuleManager.addModule(new AcgImage());
         EventChannel<Event> eventChannel = GlobalEventChannel.INSTANCE.parentScope(this);
         for (Module module : ModuleManager.getModules()) {
             Method[] methods = module.getClass().getMethods();

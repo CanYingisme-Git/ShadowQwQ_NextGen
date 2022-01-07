@@ -9,8 +9,7 @@ import al.nya.shadowqwq.utils.command.Side;
 import al.nya.shadowqwq.utils.command.Usage;
 import al.nya.shadowqwq.utils.event.EventProcessor;
 import net.mamoe.mirai.event.Event;
-import net.mamoe.mirai.event.events.FriendMessageEvent;
-import net.mamoe.mirai.event.events.GroupMessageEvent;
+import net.mamoe.mirai.event.events.*;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 
@@ -77,18 +76,40 @@ public class CoreService extends Module{
         stringBuilder.append("\n");
         for (Module module : ModuleManager.getModules()) {
             if (module.hasCommand()){
-                stringBuilder.append(module.getName());
+                stringBuilder.append("\n").append(module.getName());
                 for (Usage usage : module.getUsages()) {
                     if (usage.getSide() == side || usage.getSide() == Side.All){
-                        stringBuilder.append("\n").append("/").append(module.getCommand()).append(" ").append(usage.getName()).append(" ");
-                        for (DetailedArg arg : usage.getArgs()) {
-                            stringBuilder.append("[").append(arg.getDesc()).append("(").append(arg.getClazz().getSimpleName()).append(")] ");
+                        if (usage.getName() != null){
+                            stringBuilder.append("\n").append("/").append(module.getCommand()).append(" ").append(usage.getName()).append(" ");
+                            for (DetailedArg arg : usage.getArgs()) {
+                                stringBuilder.append("[").append(arg.getDesc()).append("(").append(arg.getClazz().getSimpleName()).append(")] ");
+                            }
+                            stringBuilder.append("-").append(usage.getDesc());
+                        }else {
+                            stringBuilder.append("\n").append("/").append(module.getCommand()).append(" ");
+                            for (DetailedArg arg : usage.getArgs()) {
+                                stringBuilder.append("[").append(arg.getDesc()).append("(").append(arg.getClazz().getSimpleName()).append(")] ");
+                            }
+                            stringBuilder.append("-").append(usage.getDesc());
                         }
-                        stringBuilder.append("-").append(usage.getDesc());
                     }
                 }
             }
         }
         return stringBuilder.toString();
+    }
+    @EventTarget
+    public void autoAcceptGroup(BotInvitedJoinGroupRequestEvent event){
+        event.accept();
+    }
+    @EventTarget
+    public void autoAcceptFriend(NewFriendRequestEvent event){
+        event.accept();
+    }
+    @EventTarget
+    public void nudge(NudgeEvent event) {
+        if (event.getTarget() == event.getBot()){
+            event.getFrom().nudge().sendTo(event.getSubject());
+        }
     }
 }

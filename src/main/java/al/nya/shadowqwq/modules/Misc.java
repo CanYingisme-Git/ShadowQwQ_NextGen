@@ -25,7 +25,6 @@ public class Misc extends Module{
     public void onGroupMessage(GroupMessageEvent event){
         if (CommandUtil.isUsage(event.getMessage(),bmiUsage,this,true)){
             List<Object> objects = CommandUtil.fastParse(event.getMessage(),bmiUsage);
-            ShadowQwQ.INSTANCE.logger.info("toggle");
             event.getGroup().sendMessage(bmi((Double)objects.get(0),(Double)objects.get(1)));
         }
     }
