@@ -2,6 +2,7 @@ package al.nya.shadowqwq;
 
 import al.nya.shadowqwq.annotation.EventTarget;
 import al.nya.shadowqwq.modules.*;
+import al.nya.shadowqwq.webhook.WebHookHttpServer;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.event.Event;
@@ -22,7 +23,7 @@ public class ShadowQwQ extends JavaPlugin {
     public static long owner = Long.parseLong("3192799549");
     public static String VERSION = "0.1";
     public static VersionType VERSION_TYPE = VersionType.ALPHA;
-    public  MiraiLogger logger = this.getLogger();
+    public MiraiLogger logger = this.getLogger();
     public static ShadowQwQ INSTANCE;
     public static enum VersionType{
         RELEASE,
@@ -39,6 +40,7 @@ public class ShadowQwQ extends JavaPlugin {
         ModuleManager.addModule(new Minecraft());
         ModuleManager.addModule(new Misc());
         ModuleManager.addModule(new AcgImage());
+        new WebHookHttpServer(1299);
         EventChannel<Event> eventChannel = GlobalEventChannel.INSTANCE.parentScope(this);
         for (Module module : ModuleManager.getModules()) {
             Method[] methods = module.getClass().getMethods();

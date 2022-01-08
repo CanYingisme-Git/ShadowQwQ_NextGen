@@ -110,6 +110,15 @@ public class AcgImage extends Module{
     }
     @EventTarget
     public void onFriendMessage(FriendMessageEvent event){
+        StringBuilder margeMessage = new StringBuilder();
+        for (SingleMessage singleMessage : event.getMessage()) {
+            if (!(singleMessage instanceof OnlineMessageSource)){
+                margeMessage.append(singleMessage.toString());
+            }
+        }
+        if (margeMessage.toString().equalsIgnoreCase("/acgimage")){
+            event.getFriend().sendMessage(getImage(null,event.getFriend()));
+        }
         if (CommandUtil.isUsage(event.getMessage(),forceUpdate,this,false)){
             if (event.getFriend().getId() == ShadowQwQ.owner){
                 long time = System.currentTimeMillis();
