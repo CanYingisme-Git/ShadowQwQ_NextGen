@@ -86,7 +86,7 @@ public class CoreService extends Module{
     private void addBlackList(Group group){
         try {
             File file = new File("./blackList.json");
-            if (file.exists()) {
+            if (!file.exists()) {
                 FileUtil.writeFile(file, new Gson().toJson(new BlackList()).getBytes(StandardCharsets.UTF_8));
             }
             BlackList blackList = new Gson().fromJson(new String(FileUtil.readFile(file)),BlackList.class);
@@ -99,7 +99,7 @@ public class CoreService extends Module{
     private boolean isBlackList(long group){
         try {
             File file = new File("./blackList.json");
-            if (file.exists()) {
+            if (!file.exists()) {
                 FileUtil.writeFile(file, new Gson().toJson(new BlackList()).getBytes(StandardCharsets.UTF_8));
             }
             BlackList blackList = new Gson().fromJson(new String(FileUtil.readFile(file)),BlackList.class);

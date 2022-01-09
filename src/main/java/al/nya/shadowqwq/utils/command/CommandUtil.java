@@ -23,25 +23,29 @@ public class CommandUtil {
         String[] messages = message.split(" ");
         if (messages.length == getLength(usage)){
             if (messages[0].equalsIgnoreCase("/"+module.getCommand())){
-                List<String> strings = parseArgs(messages);
-                int index = 0;
-                for (DetailedArg arg : usage.getArgs()) {
-                    try{
-                        if (arg.getClazz() == Integer.class){
-                            Integer.parseInt(strings.get(index));
-                        } else if (arg.getClazz() == Double.class) {
-                            Double.parseDouble(strings.get(index));
-                        }else if (arg.getClazz() == Long.class){
-                            Long.parseLong(strings.get(index));
-                        }else if (arg.getClazz() == String.class){
+                if (messages[1].equalsIgnoreCase(usage.getName())){
+                    List<String> strings = parseArgs(messages);
+                    int index = 0;
+                    for (DetailedArg arg : usage.getArgs()) {
+                        try{
+                            if (arg.getClazz() == Integer.class){
+                                Integer.parseInt(strings.get(index));
+                            } else if (arg.getClazz() == Double.class) {
+                                Double.parseDouble(strings.get(index));
+                            }else if (arg.getClazz() == Long.class){
+                                Long.parseLong(strings.get(index));
+                            }else if (arg.getClazz() == String.class){
 
-                        }else {
+                            }else {
+                                return false;
+                            }
+                        }catch (Exception e){
                             return false;
                         }
-                    }catch (Exception e){
-                        return false;
+                        index += 1;
                     }
-                    index += 1;
+                }else {
+                    return false;
                 }
             }else {
                 return false;
