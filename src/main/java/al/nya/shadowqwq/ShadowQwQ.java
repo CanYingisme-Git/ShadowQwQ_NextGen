@@ -41,6 +41,7 @@ public class ShadowQwQ extends JavaPlugin {
         ModuleManager.addModule(new Misc());
         ModuleManager.addModule(new AcgImage());
         ModuleManager.addModule(new GithubWebhook());
+        ModuleManager.addModule(new Broadcast());
         new WebHookHttpServer(1299);
         EventChannel<Event> eventChannel = GlobalEventChannel.INSTANCE.parentScope(this);
         for (Module module : ModuleManager.getModules()) {

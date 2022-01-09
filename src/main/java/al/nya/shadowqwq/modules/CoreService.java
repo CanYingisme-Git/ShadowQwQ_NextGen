@@ -3,23 +3,34 @@ package al.nya.shadowqwq.modules;
 import al.nya.shadowqwq.ShadowQwQ;
 import al.nya.shadowqwq.annotation.Command;
 import al.nya.shadowqwq.annotation.EventTarget;
+import al.nya.shadowqwq.utils.FileUtil;
 import al.nya.shadowqwq.utils.command.CommandUtil;
 import al.nya.shadowqwq.utils.command.DetailedArg;
 import al.nya.shadowqwq.utils.command.Side;
 import al.nya.shadowqwq.utils.command.Usage;
 import al.nya.shadowqwq.utils.event.EventProcessor;
+import al.nya.shadowqwq.utils.json.bot.BlackList;
+import com.google.gson.Gson;
+import net.mamoe.mirai.Bot;
+import net.mamoe.mirai.contact.Group;
+import net.mamoe.mirai.contact.MemberPermission;
 import net.mamoe.mirai.event.Event;
 import net.mamoe.mirai.event.events.*;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
 @Command(prefix = "core")
 public class CoreService extends Module{
     private Usage modulesUsage = new Usage("modules",new ArrayList<DetailedArg>(),"Get loaded modules", Side.All);
+    private Usage leaveUsage = new Usage("leave",new ArrayList<DetailedArg>(),"Order bot leave your group",Side.Group);
     private Usage addUsage;
     public CoreService() {
         super("CoreService");
@@ -29,6 +40,7 @@ public class CoreService extends Module{
         detailedArgs.add(new DetailedArg(Long.class,"B"));
         addUsage = new Usage("add",detailedArgs,"Add A and B",Side.Group);
         addUsage(addUsage);
+        addUsage(leaveUsage);
     }
     @EventTarget
     public void onFriend(FriendMessageEvent event) {
@@ -40,6 +52,7 @@ public class CoreService extends Module{
         if (CommandUtil.isUsage(event.getMessage(),modulesUsage,this,false)){
             event.getFriend().sendMessage(modules());
         }
+
     }
     @EventTarget
     public void onGroup(GroupMessageEvent event) {
@@ -61,6 +74,44 @@ public class CoreService extends Module{
         if (CommandUtil.isUsage(event.getMessage(),modulesUsage,this,false)){
             event.getGroup().sendMessage(modules());
         }
+        if (CommandUtil.isUsage(event.getMessage(),leaveUsage,this,false)){
+            if (event.getSender().getPermission() == MemberPermission.ADMINISTRATOR ||event.getSender().getPermission() == MemberPermission.OWNER ){
+                event.getGroup().quit();
+                addBlackList(event.getGroup());
+                event.getBot().getFriend(ShadowQwQ.owner).sendMessage
+                        ("Bot "+event.getBot().getId()+" Ordered to leave the group "+event.getGroup()+"|"+event.getGroup().getName()+"\nCommander:"+event.getSender().getId()+"|"+event.getSender().getNick());
+            }
+        }
+    }
+    private void addBlackList(Group group){
+        try {
+            File file = new File("./blackList.json");
+            if (file.exists()) {
+                FileUtil.writeFile(file, new Gson().toJson(new BlackList()).getBytes(StandardCharsets.UTF_8));
+            }
+            BlackList blackList = new Gson().fromJson(new String(FileUtil.readFile(file)),BlackList.class);
+            blackList.add(group);
+            FileUtil.writeFile(file, new Gson().toJson(blackList).getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private boolean isBlackList(long group){
+        try {
+            File file = new File("./blackList.json");
+            if (file.exists()) {
+                FileUtil.writeFile(file, new Gson().toJson(new BlackList()).getBytes(StandardCharsets.UTF_8));
+            }
+            BlackList blackList = new Gson().fromJson(new String(FileUtil.readFile(file)),BlackList.class);
+            for (Long blackListGroup : blackList.getGroups()) {
+                if (blackListGroup == group){
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
     private String modules(){
         StringBuilder stringBuilder = new StringBuilder();
@@ -100,7 +151,11 @@ public class CoreService extends Module{
     }
     @EventTarget
     public void autoAcceptGroup(BotInvitedJoinGroupRequestEvent event){
-        event.accept();
+        if (!isBlackList(event.getGroupId())){
+            event.accept();
+        }else {
+            event.ignore();
+        }
     }
     @EventTarget
     public void autoAcceptFriend(NewFriendRequestEvent event){
