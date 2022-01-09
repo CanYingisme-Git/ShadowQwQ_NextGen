@@ -10,8 +10,8 @@ import al.nya.shadowqwq.utils.command.CommandUtil;
 import al.nya.shadowqwq.utils.command.DetailedArg;
 import al.nya.shadowqwq.utils.command.Side;
 import al.nya.shadowqwq.utils.command.Usage;
-import al.nya.shadowqwq.utils.json.ACGDetail;
-import al.nya.shadowqwq.utils.json.ACGList;
+import al.nya.shadowqwq.utils.json.acg.ACGDetail;
+import al.nya.shadowqwq.utils.json.acg.ACGList;
 import al.nya.shadowqwq.utils.json.SavedInfo;
 import com.google.gson.Gson;
 import net.mamoe.mirai.contact.Friend;
@@ -22,10 +22,7 @@ import net.mamoe.mirai.message.data.*;
 import net.mamoe.mirai.utils.ExternalResource;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.GenericSignatureFormatError;
 import java.util.*;
-import java.util.logging.Logger;
 
 @Command(prefix = "acgimage")
 public class AcgImage extends Module{

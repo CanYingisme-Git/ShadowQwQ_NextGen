@@ -3,7 +3,7 @@ package al.nya.shadowqwq.acgimage;
 import al.nya.shadowqwq.ShadowQwQ;
 import al.nya.shadowqwq.utils.FileUtil;
 import al.nya.shadowqwq.utils.HTTPUtil;
-import al.nya.shadowqwq.utils.json.ACGList;
+import al.nya.shadowqwq.utils.json.acg.ACGList;
 import al.nya.shadowqwq.utils.json.SavedInfo;
 import com.google.gson.Gson;
 import net.mamoe.mirai.Bot;

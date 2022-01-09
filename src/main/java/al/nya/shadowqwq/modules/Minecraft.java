@@ -7,8 +7,8 @@ import al.nya.shadowqwq.utils.command.CommandUtil;
 import al.nya.shadowqwq.utils.command.DetailedArg;
 import al.nya.shadowqwq.utils.command.Side;
 import al.nya.shadowqwq.utils.command.Usage;
-import al.nya.shadowqwq.utils.json.MinecraftInfo;
-import al.nya.shadowqwq.utils.json.MinecraftProfile;
+import al.nya.shadowqwq.utils.json.minecraft.MinecraftInfo;
+import al.nya.shadowqwq.utils.json.minecraft.MinecraftProfile;
 import com.google.gson.Gson;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 

@@ -1,4 +1,4 @@
-package al.nya.shadowqwq.utils.json;
+package al.nya.shadowqwq.utils.json.acg;
 
 public class ACGPic {
     public int index;
