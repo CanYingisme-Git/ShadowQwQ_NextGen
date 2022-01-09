@@ -27,15 +27,21 @@ import java.util.List;
 @Command(prefix = "github")
 public class GithubWebhook extends Module {
     private Usage addUsage = new Usage("add", Arrays.asList(new DetailedArg(String.class,"RepositoryFullName")),"Subscribe a webhook" ,Side.Group);
+    private Usage removeUsage = new Usage("remove", Arrays.asList(new DetailedArg(String.class,"RepositoryFullName")),"Unsubscribe a webhook" ,Side.Group);
     public GithubWebhook() {
         super("GithubWebhook");
         addUsage(addUsage);
+        addUsage(removeUsage);
     }
     @EventTarget
     public void onGroupMessage(GroupMessageEvent event){
         if (CommandUtil.isUsage(event.getMessage(),addUsage,this,false)){
             List<Object> objects = CommandUtil.fastParse(event.getMessage(),addUsage);
             event.getGroup().sendMessage(addSub(event.getGroup(), (String) objects.get(0)));
+        }
+        else if (CommandUtil.isUsage(event.getMessage(),addUsage,this,false)){
+            List<Object> objects = CommandUtil.fastParse(event.getMessage(),addUsage);
+            event.getGroup().sendMessage(removeSub(event.getGroup(), (String) objects.get(0)));
         }
     }
     public static void send(WebHookInfo webHookInfo, EnumEventType eventType){
@@ -95,11 +101,42 @@ public class GithubWebhook extends Module {
         }
         return groups;
     }
+    private MessageChain removeSub(Group group,String repo){
+        try{
+            if (!repo.contains("/")){
+                MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
+                messageChainBuilder.add("Please use full name eg. CanYingisme-Git/ShadowQwQ_NextGen");
+                return messageChainBuilder.asMessageChain();
+            }
+            File config = new File("./github.json");
+            Gson gson = new Gson();
+            if (!config.exists()){
+                GithubSaveInfo githubSaveInfo = new GithubSaveInfo();
+                FileUtil.writeFile(config,gson.toJson(githubSaveInfo).getBytes(StandardCharsets.UTF_8));
+            }
+            GithubSaveInfo githubSaveInfo;
+            githubSaveInfo = gson.fromJson(new String(FileUtil.readFile(config)),GithubSaveInfo.class);
+            for (GithubSubscribeInfo subscribe : githubSaveInfo.getSubscribes()) {
+                if (subscribe.getGroup() == group.getId()){
+                    subscribe.getRepos().removeIf(subscribeRepo -> subscribeRepo.equals(repo));
+                }
+            }
+            FileUtil.writeFile(config,gson.toJson(githubSaveInfo).getBytes(StandardCharsets.UTF_8));
+            MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
+            messageChainBuilder.add("Successfully remove WebHook");
+            return messageChainBuilder.asMessageChain();
+        }catch (Exception e){
+            e.printStackTrace();
+            MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
+            messageChainBuilder.add(e.getMessage());
+            return messageChainBuilder.asMessageChain();
+        }
+    }
     private MessageChain addSub(Group group,String repo){
         try{
             if (!repo.contains("/")){
                 MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
-                messageChainBuilder.add("Please use full name eg. CanYingisme-Git/ShadowQwQNext");
+                messageChainBuilder.add("Please use full name eg. CanYingisme-Git/ShadowQwQ_NextGen");
                 return messageChainBuilder.asMessageChain();
             }
             File config = new File("./github.json");
@@ -122,7 +159,7 @@ public class GithubWebhook extends Module {
                     subscribe.addRepo(repo);
                     FileUtil.writeFile(config,gson.toJson(githubSaveInfo).getBytes(StandardCharsets.UTF_8));
                     MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
-                    messageChainBuilder.add("Successfully added WebHook");
+                    messageChainBuilder.add("Successfully add WebHook");
                     return messageChainBuilder.asMessageChain();
                 }
             }
@@ -131,7 +168,7 @@ public class GithubWebhook extends Module {
             githubSaveInfo.addSub(subscribe);
             FileUtil.writeFile(config,gson.toJson(githubSaveInfo).getBytes(StandardCharsets.UTF_8));
             MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
-            messageChainBuilder.add("Successfully added WebHook");
+            messageChainBuilder.add("Successfully add WebHook");
             return messageChainBuilder.asMessageChain();
         }catch (Exception e){
             e.printStackTrace();
