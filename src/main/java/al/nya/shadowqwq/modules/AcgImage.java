@@ -22,6 +22,7 @@ import net.mamoe.mirai.message.data.*;
 import net.mamoe.mirai.utils.ExternalResource;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 @Command(prefix = "acgimage")
@@ -58,23 +59,19 @@ public class AcgImage extends Module{
         if (config.exists()){
             try {
                 SavedInfo savedInfo = new Gson().fromJson(new String(FileUtil.readFile(config)),SavedInfo.class);
-                int randomPage = new Random().nextInt(savedInfo.available);
+                int randomPage = new Random().nextInt(savedInfo.available - 1) + 1;
                 String list = new String(HTTPUtil.getBytes("https://someacg.rocks/api/list?page="+randomPage));
                 ShadowQwQ.INSTANCE.logger.info(list);
                 ACGList acgList = new Gson().fromJson(list,ACGList.class);
-                int randomImage = new Random().nextInt(acgList.list.size());
-                String detail = new String(HTTPUtil.getBytes("https://someacg.rocks/api/detail/"+acgList.list.get(randomImage).index));
-                ShadowQwQ.INSTANCE.logger.info(detail);
-                ACGDetail acgDetail = new Gson().fromJson(detail,ACGDetail.class);
-                File file = new File("./acgimage/"+acgDetail.data.file_name);
-                ShadowQwQ.INSTANCE.logger.info("receiving image");
+                int randomImage = new Random().nextInt(acgList.body.size());
                 if (group != null){
-                    group.sendMessage("receiving image");
+                    group.sendMessage("Receiving image");
                 }
                 if (friend != null){
-                    friend.sendMessage("receiving image");
+                    friend.sendMessage("Receiving image");
                 }
-                FileUtil.writeFile(file,HTTPUtil.getBytes("https://someacg.rocks/api/file/"+acgDetail.data.file_name));
+                File file = new File("./acgimage/"+acgList.body.get(randomImage).file_name);
+                FileUtil.writeFile(file,HTTPUtil.getBytes("https://someacg.rocks/api/file/"+acgList.body.get(randomImage).file_name));
                 Image image = null;
                 if (group != null){
                     image = group.uploadImage(ExternalResource.create(file));
@@ -85,7 +82,7 @@ public class AcgImage extends Module{
                 long total = System.currentTimeMillis() - time;
                 MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
                 messageChainBuilder.add("Image from someacg.rocks\n");
-                messageChainBuilder.add("https://someacg.rocks/detail/"+acgList.list.get(randomImage).index);
+                messageChainBuilder.add("https://someacg.rocks/detail/"+acgList.body.get(randomImage).index);
                 messageChainBuilder.add(image);
                 messageChainBuilder.add("\n Total time:"+total+"ms");
                 return messageChainBuilder.asMessageChain();
@@ -106,7 +103,7 @@ public class AcgImage extends Module{
         }
     }
     @EventTarget
-    public void onFriendMessage(FriendMessageEvent event){
+    public void onFriendMessage(FriendMessageEvent event) throws IOException {
         StringBuilder margeMessage = new StringBuilder();
         for (SingleMessage singleMessage : event.getMessage()) {
             if (!(singleMessage instanceof OnlineMessageSource)){
@@ -129,7 +126,9 @@ public class AcgImage extends Module{
                     return;
                 }
                 long total = System.currentTimeMillis() - time;
-                event.getFriend().sendMessage("Pages info updated\nTotal time:"+total+"ms");
+                File config = new File("./acgimage/info.json");
+                SavedInfo savedInfo = new Gson().fromJson(new String(FileUtil.readFile(config)),SavedInfo.class);
+                event.getFriend().sendMessage("Pages info updated\nTotal pages:"+savedInfo.available+"\nTotal time:"+total+"ms");
             }
         }
     }

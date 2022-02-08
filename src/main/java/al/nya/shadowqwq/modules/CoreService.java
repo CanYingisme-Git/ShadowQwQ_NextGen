@@ -82,6 +82,7 @@ public class CoreService extends Module{
                         ("Bot "+event.getBot().getId()+" Ordered to leave the group "+event.getGroup()+"|"+event.getGroup().getName()+"\nCommander:"+event.getSender().getId()+"|"+event.getSender().getNick());
             }
         }
+
     }
     private void addBlackList(Group group){
         try {

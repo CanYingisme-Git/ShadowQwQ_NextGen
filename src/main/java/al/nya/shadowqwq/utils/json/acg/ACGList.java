@@ -4,6 +4,5 @@ import java.util.List;
 
 public class ACGList {
     public int status;
-    public boolean more;
-    public List<ACGPic> list;
+    public List<ACGPic> body;
 }

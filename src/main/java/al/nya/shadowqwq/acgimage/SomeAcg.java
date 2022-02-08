@@ -42,19 +42,25 @@ public class SomeAcg extends TimerTask {
         for (Bot instance : Bot.getInstances()) {
             Friend friend = instance.getFriend(ShadowQwQ.owner);
             if (friend != null){
-                friend.sendMessage("Pages info updated\nTotal time:"+time+"ms");
+                File config = new File("./acgimage/info.json");
+                try {
+                    SavedInfo savedInfo = new Gson().fromJson(new String(FileUtil.readFile(config)),SavedInfo.class);
+                    friend.sendMessage("Pages info updated\nTotal pages:"+savedInfo.available+" Total time:"+time+"ms");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
     public static void update() throws IOException {
         //https://someacg.rocks/api/list
-        int maxList = -1;
+        int maxList = 0;
         boolean more = true;
         while (more){
             maxList += 1;
             String list = HTTPUtil.get("https://someacg.rocks/api/list?page="+maxList);
             ACGList acgList = new Gson().fromJson(list,ACGList.class);
-            more = acgList.more;
+            more = acgList.body.size() != 0;
         }
         new File("./acgimage").mkdir();
         SavedInfo savedInfo = new SavedInfo(maxList);
