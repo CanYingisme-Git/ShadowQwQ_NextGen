@@ -4,16 +4,16 @@ import java.util.List;
 
 public class Usage {
     private String name;
-    private List<DetailedArg> args;
+    private List<CommandArg> args;
     private String desc;
     private Side side;
-    public Usage(String name, List<DetailedArg> args,Side side){
+    public Usage(String name, List<CommandArg> args,Side side){
         this.name = name;
         this.args = args;
         this.desc = "null";
         this.side = side;
     }
-    public Usage(String name, List<DetailedArg> args,String desc,Side side){
+    public Usage(String name, List<CommandArg> args,String desc,Side side){
         this.name = name;
         this.args = args;
         this.desc = desc;
@@ -32,7 +32,7 @@ public class Usage {
         return side;
     }
 
-    public List<DetailedArg> getArgs() {
+    public List<CommandArg> getArgs() {
         return args;
     }
 }

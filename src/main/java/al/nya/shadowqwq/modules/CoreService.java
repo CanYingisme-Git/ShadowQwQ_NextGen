@@ -4,10 +4,7 @@ import al.nya.shadowqwq.ShadowQwQ;
 import al.nya.shadowqwq.annotation.Command;
 import al.nya.shadowqwq.annotation.EventTarget;
 import al.nya.shadowqwq.utils.FileUtil;
-import al.nya.shadowqwq.utils.command.CommandUtil;
-import al.nya.shadowqwq.utils.command.DetailedArg;
-import al.nya.shadowqwq.utils.command.Side;
-import al.nya.shadowqwq.utils.command.Usage;
+import al.nya.shadowqwq.utils.command.*;
 import al.nya.shadowqwq.utils.event.EventProcessor;
 import al.nya.shadowqwq.utils.json.bot.BlackList;
 import com.google.gson.Gson;
@@ -29,13 +26,13 @@ import java.util.function.Consumer;
 
 @Command(prefix = "core")
 public class CoreService extends Module{
-    private Usage modulesUsage = new Usage("modules",new ArrayList<DetailedArg>(),"Get loaded modules", Side.All);
-    private Usage leaveUsage = new Usage("leave",new ArrayList<DetailedArg>(),"Order bot leave your group",Side.Group);
+    private Usage modulesUsage = new Usage("modules",new ArrayList<CommandArg>(),"Get loaded modules", Side.All);
+    private Usage leaveUsage = new Usage("leave",new ArrayList<CommandArg>(),"Order bot leave your group",Side.Group);
     private Usage addUsage;
     public CoreService() {
         super("CoreService");
         addUsage(modulesUsage);
-        ArrayList<DetailedArg> detailedArgs = new ArrayList<DetailedArg>();
+        ArrayList<CommandArg> detailedArgs = new ArrayList<CommandArg>();
         detailedArgs.add(new DetailedArg(Long.class,"A"));
         detailedArgs.add(new DetailedArg(Long.class,"B"));
         addUsage = new Usage("add",detailedArgs,"Add A and B",Side.Group);
@@ -133,16 +130,37 @@ public class CoreService extends Module{
                     if (usage.getSide() == side || usage.getSide() == Side.All){
                         if (usage.getName() != null){
                             stringBuilder.append("\n").append("/").append(module.getCommand()).append(" ").append(usage.getName()).append(" ");
-                            for (DetailedArg arg : usage.getArgs()) {
-                                stringBuilder.append("[").append(arg.getDesc()).append("(").append(arg.getClazz().getSimpleName()).append(")] ");
+                            for (CommandArg arg : usage.getArgs()) {
+                                if (arg instanceof DetailedArg){
+                                    stringBuilder.append("[").append(arg.getDesc()).append("(").append(((DetailedArg) arg).getClazz().getSimpleName()).append(")] ");
+                                }else if (arg instanceof EnumArg){
+                                    stringBuilder.append("[").append(arg.getDesc()).append("(");
+                                    int i = 0;
+                                    for (Enum anEnum : ((EnumArg) arg).getEnums()) {
+                                        stringBuilder.append(anEnum.name());
+                                        if (i != ((EnumArg) arg).getEnums().length)stringBuilder.append("/");
+                                        i++;
+                                    }
+                                    stringBuilder.append(")] ");
+                                }
                             }
                             stringBuilder.append("-").append(usage.getDesc());
                         }else {
                             stringBuilder.append("\n").append("/").append(module.getCommand()).append(" ");
-                            for (DetailedArg arg : usage.getArgs()) {
-                                stringBuilder.append("[").append(arg.getDesc()).append("(").append(arg.getClazz().getSimpleName()).append(")] ");
+                            for (CommandArg arg : usage.getArgs()) {
+                                if (arg instanceof DetailedArg){
+                                    stringBuilder.append("[").append(arg.getDesc()).append("(").append(((DetailedArg) arg).getClazz().getSimpleName()).append(")] ");
+                                }else if (arg instanceof EnumArg){
+                                    stringBuilder.append("[").append(arg.getDesc()).append("(");
+                                    int i = 0;
+                                    for (Enum anEnum : ((EnumArg) arg).getEnums()) {
+                                        stringBuilder.append(anEnum.name());
+                                        if (i != ((EnumArg) arg).getEnums().length)stringBuilder.append("/");
+                                        i++;
+                                    }
+                                    stringBuilder.append(")] ");
+                                }
                             }
-                            stringBuilder.append("-").append(usage.getDesc());
                         }
                     }
                 }

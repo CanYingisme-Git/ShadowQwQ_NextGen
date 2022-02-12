@@ -6,10 +6,7 @@ import al.nya.shadowqwq.annotation.Command;
 import al.nya.shadowqwq.annotation.EventTarget;
 import al.nya.shadowqwq.utils.FileUtil;
 import al.nya.shadowqwq.utils.HTTPUtil;
-import al.nya.shadowqwq.utils.command.CommandUtil;
-import al.nya.shadowqwq.utils.command.DetailedArg;
-import al.nya.shadowqwq.utils.command.Side;
-import al.nya.shadowqwq.utils.command.Usage;
+import al.nya.shadowqwq.utils.command.*;
 import al.nya.shadowqwq.utils.json.acg.ACGDetail;
 import al.nya.shadowqwq.utils.json.acg.ACGList;
 import al.nya.shadowqwq.utils.json.SavedInfo;
@@ -27,8 +24,8 @@ import java.util.*;
 
 @Command(prefix = "acgimage")
 public class AcgImage extends Module{
-    private static Usage acgUsage = new Usage(null,new ArrayList<DetailedArg>(),"Get ACG Images", Side.All);
-    private static Usage forceUpdate = new Usage("update",new ArrayList<DetailedArg>(),"Force update pages list",Side.Private);
+    private static Usage acgUsage = new Usage(null,new ArrayList<CommandArg>(),"Get ACG Images", Side.All);
+    private static Usage forceUpdate = new Usage("update",new ArrayList<CommandArg>(),"Force update pages list",Side.Private);
     public AcgImage() {
         super("AcgImage");
         addUsage(acgUsage);

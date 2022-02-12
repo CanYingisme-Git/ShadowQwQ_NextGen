@@ -26,21 +26,37 @@ public class CommandUtil {
                 if (messages[1].equalsIgnoreCase(usage.getName())){
                     List<String> strings = parseArgs(messages);
                     int index = 0;
-                    for (DetailedArg arg : usage.getArgs()) {
-                        try{
-                            if (arg.getClazz() == Integer.class){
-                                Integer.parseInt(strings.get(index));
-                            } else if (arg.getClazz() == Double.class) {
-                                Double.parseDouble(strings.get(index));
-                            }else if (arg.getClazz() == Long.class){
-                                Long.parseLong(strings.get(index));
-                            }else if (arg.getClazz() == String.class){
+                    for (CommandArg arg : usage.getArgs()) {
+                        if (arg instanceof DetailedArg){
+                            DetailedArg detailedArg = (DetailedArg) arg;
+                            try{
+                                if (detailedArg.getClazz() == Integer.class){
+                                    Integer.parseInt(strings.get(index));
+                                } else if (detailedArg.getClazz() == Double.class) {
+                                    Double.parseDouble(strings.get(index));
+                                }else if (detailedArg.getClazz() == Long.class){
+                                    Long.parseLong(strings.get(index));
+                                }else if (detailedArg.getClazz() == String.class){
 
-                            }else {
+                                }else {
+                                    return false;
+                                }
+                            }catch (Exception e){
                                 return false;
                             }
-                        }catch (Exception e){
-                            return false;
+                        }else if (arg instanceof EnumArg){
+                            EnumArg enumArg = (EnumArg) arg;
+                            try{
+                                Enum anEnum = null;
+                                for (Enum enumArgEnum : enumArg.getEnums()) {
+                                    if (strings.get(index).equalsIgnoreCase(enumArgEnum.name())){
+                                        anEnum = enumArgEnum;
+                                    }
+                                }
+                                if (anEnum == null)return false;
+                            }catch (Exception e){
+                                return false;
+                            }
                         }
                         index += 1;
                     }
@@ -66,17 +82,27 @@ public class CommandUtil {
         String[] messages = message.split(" ");
         List<Object> objects = new ArrayList<Object>();
         int index = 0;
-        for (DetailedArg arg : usage.getArgs()) {
-            Class clazz = arg.getClazz();
-            if (clazz == Integer.class){
-                objects.add(Integer.parseInt(messages[2+index]));
-            }else if (clazz == String.class){
-                objects.add(messages[2+index]);
-            }else if (clazz == Double.class){
-                objects.add(Double.parseDouble(messages[2+index]));
-            }else if (clazz == Long.class){
-                objects.add(Long.parseLong(messages[2+index]));
+        for (CommandArg arg : usage.getArgs()) {
+            if (arg instanceof DetailedArg){
+                Class clazz = ((DetailedArg) arg).getClazz();
+                if (clazz == Integer.class){
+                    objects.add(Integer.parseInt(messages[2+index]));
+                }else if (clazz == String.class){
+                    objects.add(messages[2+index]);
+                }else if (clazz == Double.class){
+                    objects.add(Double.parseDouble(messages[2+index]));
+                }else if (clazz == Long.class){
+                    objects.add(Long.parseLong(messages[2+index]));
+                }
+            }else if (arg instanceof EnumArg){
+                for (Enum anEnum : ((EnumArg) arg).getEnums()) {
+                    if (anEnum.name().equalsIgnoreCase(messages[2+index])){
+                        objects.add(anEnum);
+                        break;
+                    }
+                }
             }
+
             index += 1;
         }
         return objects;
