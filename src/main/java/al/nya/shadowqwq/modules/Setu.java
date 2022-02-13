@@ -10,6 +10,7 @@ import al.nya.shadowqwq.utils.json.lolicon.LoliconAPI;
 import al.nya.shadowqwq.utils.json.lolicon.LoliconData;
 import al.nya.shadowqwq.utils.json.lolicon.LoliconUrl;
 import com.google.gson.Gson;
+import com.sun.javafx.fxml.builder.URLBuilder;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.Image;
@@ -20,6 +21,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -122,15 +127,20 @@ public class Setu extends Module {
                         String url = "https://api.lolicon.app/setu/v2?r18="+type.value+"&num=1";
                         if (tag != null){
                             for (String s1 : tag.split(",")) {
-                                url+="&tag="+s1;
+                                url+="&tag="+URLEncoder.encode(s1,"UTF-8");
                             }
                         }
                         url+="&proxy=i.pximg.net";
-                        String s2 = HTTPUtil.get(url);
+                        ShadowQwQ.INSTANCE.logger.info(url);
+                        String s2 = new String(HTTPUtil.getBytes(url), StandardCharsets.UTF_8);
                         ShadowQwQ.INSTANCE.logger.info(s2);
                         LoliconAPI loliconAPI = new Gson().fromJson(s2,LoliconAPI.class);
                         if (!loliconAPI.error.equals("")){
                             group.sendMessage(loliconAPI.error);
+                            return;
+                        }
+                        if (loliconAPI.data.size() == 0){
+                            group.sendMessage("Return data array list size is 0");
                             return;
                         }
                         group.sendMessage("Receiving image");
@@ -142,7 +152,7 @@ public class Setu extends Module {
                         sb.append("API:Lolicon API\n");
                         sb.append("Title:").append(loliconData.title).append("\n");
                         sb.append("Author:").append(loliconData.author).append("\n");
-                        sb.append("R18:").append(loliconData.r18).append("'n");
+                        sb.append("R18:").append(loliconData.r18).append("\n");
                         sb.append("Tags:");
                         for (String tag1 : loliconData.tags) {
                             sb.append(tag1).append(",");
@@ -158,6 +168,7 @@ public class Setu extends Module {
                         msg.add(image);
                         long total = System.currentTimeMillis() - time;
                         msg.add("Total time:"+total+"ms");
+                        group.sendMessage(msg.asMessageChain());
                     }
                     return;
                 }

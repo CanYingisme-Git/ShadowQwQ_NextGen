@@ -1,5 +1,6 @@
 package al.nya.shadowqwq.utils;
 
+import al.nya.shadowqwq.ShadowQwQ;
 import sun.net.www.http.HttpClient;
 
 import java.io.*;
@@ -46,7 +47,7 @@ public class HTTPUtil {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setConnectTimeout(3*1000);
         conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
-        conn.setRequestProperty("Referer" , "https://www.pixiv.net/");
+        conn.setRequestProperty("Referer" , "https://www.pixiv.net");
         InputStream inputStream = conn.getInputStream();
         byte[] buffer = new byte[1024];
         int len = 0;
