@@ -121,8 +121,8 @@ public class Setu extends Module {
             File file = new File("./setu.txt");
             String s = new String(FileUtil.readFile(file));
             List<String> groups = new ArrayList<String>(Arrays.asList(s.split("_")));
-            for (String group1 : groups) {
-                if (group1.equalsIgnoreCase(String.valueOf(group.getId()))){
+            //for (String group1 : groups) {
+                if (true){
                     {
                         String url = "https://api.lolicon.app/setu/v2?r18="+type.value+"&num=1";
                         if (tag != null){
@@ -172,7 +172,7 @@ public class Setu extends Module {
                     }
                     return;
                 }
-            }
+            //}
         }catch (Exception e){
             e.getStackTrace();
             group.sendMessage(e.toString());
