@@ -28,6 +28,8 @@ import java.util.function.Consumer;
 public class CoreService extends Module{
     private Usage modulesUsage = new Usage("modules",new ArrayList<CommandArg>(),"Get loaded modules", Side.All);
     private Usage leaveUsage = new Usage("leave",new ArrayList<CommandArg>(),"Order bot leave your group",Side.Group);
+    private Usage groupsUsage = new Usage("groups",new ArrayList<CommandArg>(),"Get gropus",Side.Private);
+    private Usage friendsUsage = new Usage("friends",new ArrayList<CommandArg>(),"Get friends",Side.Private);
     private Usage addUsage;
     public CoreService() {
         super("CoreService");
@@ -38,6 +40,8 @@ public class CoreService extends Module{
         addUsage = new Usage("add",detailedArgs,"Add A and B",Side.Group);
         addUsage(addUsage);
         addUsage(leaveUsage);
+        addUsage(groupsUsage);
+        addUsage(friendsUsage);
     }
     @EventTarget
     public void onFriend(FriendMessageEvent event) {
@@ -49,7 +53,12 @@ public class CoreService extends Module{
         if (CommandUtil.isUsage(event.getMessage(),modulesUsage,this,false)){
             event.getFriend().sendMessage(modules());
         }
-
+        if (CommandUtil.isUsage(event.getMessage(),groupsUsage,this,false)){
+            event.getFriend().sendMessage(event.getBot().getGroups().size()+"group(s)");
+        }
+        if (CommandUtil.isUsage(event.getMessage(),friendsUsage,this,false)){
+            event.getFriend().sendMessage(event.getBot().getFriends().size()+"friend(s)");
+        }
     }
     @EventTarget
     public void onGroup(GroupMessageEvent event) {

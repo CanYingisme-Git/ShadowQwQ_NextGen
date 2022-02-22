@@ -1,7 +1,9 @@
 package al.nya.shadowqwq.utils.command;
 
 import al.nya.shadowqwq.ShadowQwQ;
+import al.nya.shadowqwq.modules.Analyze;
 import al.nya.shadowqwq.modules.Module;
+import al.nya.shadowqwq.modules.ModuleManager;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.OnlineMessageSource;
 import net.mamoe.mirai.message.data.SingleMessage;
@@ -66,6 +68,11 @@ public class CommandUtil {
             }else {
                 return false;
             }
+            ModuleManager.getModules().forEach((M)->{
+                if (M.getName().equals("Analyze")){
+                    ((Analyze)M).onCommandHit(module,usage);
+                }
+            });
             return true;
         }else {
             return false;

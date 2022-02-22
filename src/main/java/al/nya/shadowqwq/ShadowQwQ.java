@@ -30,9 +30,10 @@ public class ShadowQwQ extends JavaPlugin {
         ALPHA
     }
     public ShadowQwQ() {
-        super(new JvmPluginDescriptionBuilder(ID,VERSION).info("A QQ BOT").name("ShadowQwQ").build());
+        super(new JvmPluginDescriptionBuilder(ID, VERSION).info("A QQ BOT").name("ShadowQwQ").build());
         INSTANCE = this;
     }
+
     @Override
     public void onEnable(){
         logger.info("ShadowQwQ enabled");
@@ -42,8 +43,9 @@ public class ShadowQwQ extends JavaPlugin {
         ModuleManager.addModule(new AcgImage());
         ModuleManager.addModule(new GithubWebhook());
         ModuleManager.addModule(new Broadcast());
+        ModuleManager.addModule(new Analyze());
         ModuleManager.addModule(new Setu());
-        ModuleManager.addModule(new Base64());
+        //ModuleManager.addModule(new Base64());
         new WebHookHttpServer(1299);
         EventChannel<Event> eventChannel = GlobalEventChannel.INSTANCE.parentScope(this);
         for (Module module : ModuleManager.getModules()) {
