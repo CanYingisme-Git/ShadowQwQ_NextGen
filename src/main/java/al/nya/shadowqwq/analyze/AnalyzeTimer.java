@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AnalyzeTimer extends TimerTask {
-    private Map<Module,Map<Usage,Long>> commandUses = new HashMap<Module,Map<Usage,Long>>();
+    private Map<Module,Map<Usage,List<Usage>>> commandUses = new HashMap<Module,Map<Usage,List<Usage>>>();
     private long messagesGroup = 0;
     private long messagesFriend = 0;
     private long offline = 0;
@@ -43,19 +43,19 @@ public class AnalyzeTimer extends TimerTask {
                     AtomicBoolean store = new AtomicBoolean(false);
                     L.forEach((U,LL)->{
                         if (U == usage){
-                            LL += 1;
+                            LL.add(usage);
                             store.set(true);
                             stored.set(true);
                         }
                     });
                     if (!store.get()){
-                        L.put(usage,1L);
+                        L.put(usage,Arrays.asList(usage));
                         stored.set(true);
                     }
                 }
             });
             if (!stored.get()){
-                commandUses.put(module, Collections.singletonMap(usage,1L));
+                commandUses.put(module, Collections.singletonMap(usage,Arrays.asList(usage)));
             }
         }
     }
@@ -65,7 +65,7 @@ public class AnalyzeTimer extends TimerTask {
         sb.append("Total group message(s):").append(messagesGroup).append("\n");
         sb.append("Total friend message(s):").append(messagesFriend).append("\n");
         sb.append("Total friend message(s):").append(messagesFriend).append("\n");
-        sb.append("Offline ").append(offline).append(" time(s)");
+        sb.append("Offline ").append(offline).append(" time(s)").append("\n");
         sb.append("Total friend(s):").append(Bot.getInstances().get(0).getFriends().size()).append("\n");
         sb.append("Total group(s):").append(Bot.getInstances().get(0).getGroups().size()).append("\n");
         sb.append("command used times:").append("\n");
@@ -73,15 +73,14 @@ public class AnalyzeTimer extends TimerTask {
             sb.append(M.getName()).append(":\n");
             L.forEach((U,LV)->{
                 if (U.getName() == null){
-                    sb.append("/").append(M.getName()).append(":").append(LV).append("\n");
+                    sb.append("/").append(M.getName()).append(":").append(LV.size()).append("\n");
                 }else {
-                    sb.append("/").append(M.getName()).append(" ").append(U.getName()).append(":").append(LV).append("\n");
+                    sb.append("/").append(M.getName()).append(" ").append(U.getName()).append(":").append(LV.size()).append("\n");
                 }
             });
         });
         File setu = new File("./setu");
         sb.append("Setu cached image(s):").append(setu.listFiles().length).append("\n");
-        sb.append("Setu cache dir space occupation:").append(setu.getTotalSpace()/1024/1024).append("GB");
         MessageChainBuilder mb = new MessageChainBuilder();
         mb.append(sb.toString());
         return mb.asMessageChain();

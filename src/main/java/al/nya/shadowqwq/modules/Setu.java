@@ -10,7 +10,6 @@ import al.nya.shadowqwq.utils.json.lolicon.LoliconAPI;
 import al.nya.shadowqwq.utils.json.lolicon.LoliconData;
 import al.nya.shadowqwq.utils.json.lolicon.LoliconUrl;
 import com.google.gson.Gson;
-import com.sun.javafx.fxml.builder.URLBuilder;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.Image;
@@ -18,13 +17,7 @@ import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.utils.ExternalResource;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.net.URI;
-import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -121,8 +114,8 @@ public class Setu extends Module {
             File file = new File("./setu.txt");
             String s = new String(FileUtil.readFile(file));
             List<String> groups = new ArrayList<String>(Arrays.asList(s.split("_")));
-            //for (String group1 : groups) {
-                if (true){
+            for (String group1 : groups) {
+                if (group1.equalsIgnoreCase(String.valueOf(group.getId()))){
                     {
                         String url = "https://api.lolicon.app/setu/v2?r18="+type.value+"&num=1";
                         if (tag != null){
@@ -172,7 +165,7 @@ public class Setu extends Module {
                     }
                     return;
                 }
-            //}
+            }
         }catch (Exception e){
             e.getStackTrace();
             group.sendMessage(e.toString());
