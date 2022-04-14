@@ -68,11 +68,6 @@ public class CommandUtil {
             }else {
                 return false;
             }
-            ModuleManager.getModules().forEach((M)->{
-                if (M.getName().equals("Analyze")){
-                    ((Analyze)M).onCommandHit(module,usage);
-                }
-            });
             return true;
         }else {
             return false;
